@@ -70,6 +70,11 @@ def gSpan(C, D, minsup):
     :return:
     """
     E = right_most_path_extensions(C, D)
+    for (t, sup) in E:
+        C_prime = C + [t]
+        sup_C_prime = sup
+        if sup_C_prime >= minsup and is_canonical(C_prime):
+            gSpan(C_prime, D, minsup)
 
 
 if __name__ == "__main__":
@@ -77,5 +82,8 @@ if __name__ == "__main__":
     # E = right_most_path_extensions(None, D)
     # for g in E.values():
     #     print g
-    sup = right_most_path_extensions(None, D)
-    print sup
+    # E = right_most_path_extensions([], D)
+    # for (t, sup) in E:
+    #     print t
+    #     print sup
+    gSpan([], D, 2)
