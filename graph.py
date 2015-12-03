@@ -1,21 +1,19 @@
 #!/usr/bin/env python
 
-
 __author__ = 'Jamie Fujimoto'
-
 
 # referenced code from http://www.bogotobogo.com/python/python_graph_data_structures.php
 
 
 class Vertex(object):
-    def __init__(self, node, label):
-        self.id = node
+    def __init__(self, id, label):
+        self.id = id
         self.label = label
         self.edges = []
 
 
     def add_edge(self, neighbor_label, edge_label):
-        edge = (self.label, neighbor_label, edge_label)
+        edge = (self.label, neighbor_label, edge_label)  # might be an issue because it does not maintain vertex IDs
         self.edges.append(edge)
 
 
@@ -29,9 +27,9 @@ class Graph(object):
         return iter(self.vertices.values())
 
 
-    def add_vertex(self, node, label=''):
-        new_vertex = Vertex(node, label)
-        self.vertices[node] = new_vertex
+    def add_vertex(self, v_id, label=''):
+        new_vertex = Vertex(v_id, label)
+        self.vertices[v_id] = new_vertex
 
 
     def add_edge(self, node1, node2, label=''):
@@ -41,6 +39,15 @@ class Graph(object):
             self.add_vertex(node2)
         self.vertices[node1].add_edge(self.vertices[node2].label, label)
         self.vertices[node2].add_edge(self.vertices[node1].label, label)
+
+
+    def get_distinct_label_tuples(self):
+        tuples = []
+        for v in self.vertices.values():
+            tuples.extend(v.edges)
+        distinct = list(set(tuples))
+        distinct.sort()
+        return distinct
 
 
 if __name__ == '__main__':
@@ -59,3 +66,4 @@ if __name__ == '__main__':
     print "id: {}".format(g.id)
     for v in g:
         print "{} {} {}".format(v.id, v.label, v.edges)
+    print g.get_distinct_label_tuples()
