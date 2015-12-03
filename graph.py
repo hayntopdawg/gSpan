@@ -20,9 +20,13 @@ class Vertex(object):
 
 
 class Graph(object):
-    def __init__(self):
-        self.id = None
+    def __init__(self, id):
+        self.id = id
         self.vertices = {}
+
+
+    def __iter__(self):
+        return iter(self.vertices.values())
 
 
     def add_vertex(self, node, label=''):
@@ -37,3 +41,21 @@ class Graph(object):
             self.add_vertex(node2)
         self.vertices[node1].add_edge(self.vertices[node2].label, label)
         self.vertices[node2].add_edge(self.vertices[node1].label, label)
+
+
+if __name__ == '__main__':
+    g = Graph(1)
+
+    g.add_vertex(10, 'a')
+    g.add_vertex(20, 'b')
+    g.add_vertex(30, 'a')
+    g.add_vertex(40, 'b')
+
+    g.add_edge(10, 20, '_')
+    g.add_edge(10, 30, '_')
+    g.add_edge(20, 30, '_')
+    g.add_edge(30, 40, '_')
+
+    print "id: {}".format(g.id)
+    for v in g:
+        print "{} {} {}".format(v.id, v.label, v.edges)
