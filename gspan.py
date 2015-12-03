@@ -30,15 +30,25 @@ def right_most_path_extensions(C, D):
     for g in D:
         if not C:
             # add distinct label tuples in Gi as forward extensions
-            E[g.id] = {}
-            distinct = 0
+            E[g.id] = []
+            # distinct = 0
             for dist_tuple in g.get_distinct_label_tuples():
-                E[g.id][distinct] = (0, 1) + dist_tuple
-                distinct += 1
+                E[g.id].append((0, 1) + dist_tuple)
+                # E[g.id][distinct] = (0, 1) + dist_tuple
+                # distinct += 1
         else:
             # psi = sub_graph_isomorphism(C, G)
             pass
-    return E
+    # compute the support of each extension
+    sup = {}
+    for g in E.values():
+        for ext in g:
+            if ext not in sup:
+                sup[ext] = 1
+            else:
+                sup[ext] += 1
+    # return E
+    return sorted(sup.items())
 
 
 def is_canonical(C_prime):
@@ -59,11 +69,13 @@ def gSpan(C, D, minsup):
     :param minsup: minimum support threshold
     :return:
     """
-    pass
+    E = right_most_path_extensions(C, D)
 
 
 if __name__ == "__main__":
     D = graph_reader.graph_reader("exampleG.txt")
-    E = right_most_path_extensions(None, D)
-    for g in E.values():
-        print g
+    # E = right_most_path_extensions(None, D)
+    # for g in E.values():
+    #     print g
+    sup = right_most_path_extensions(None, D)
+    print sup
