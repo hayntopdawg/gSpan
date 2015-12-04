@@ -39,8 +39,8 @@ class Graph(object):
             self.add_vertex(node1)
         if node2 not in self.vertices:
             self.add_vertex(node2)
-        self.vertices[node1].add_connection(node2, self.vertices[node2].label, label)
-        self.vertices[node2].add_connection(node1, self.vertices[node1].label, label)
+        self.vertices[node1].add_edge(node2, self.vertices[node2].label, label)
+        self.vertices[node2].add_edge(node1, self.vertices[node1].label, label)
 
 
     def add_ext(self, t):
@@ -61,6 +61,14 @@ class Graph(object):
 
     def get_vertex_by_label(self, label):
         return [v.id for v in self.vertices.values() if v.label == label]
+
+
+    def get_vertex_label(self, v_id):
+        return self.vertices[v_id].label
+
+
+    def get_edge_label(self, node1, node2):
+        pass
 
 
     def get_neighbors(self, v_id):
