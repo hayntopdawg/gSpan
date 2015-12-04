@@ -41,6 +41,13 @@ class Graph(object):
         self.vertices[node2].add_edge(self.vertices[node1].label, label)
 
 
+    def add_ext(self, t):
+        node1, node2, node1_label, node2_label, edge_label = t
+        self.add_vertex(node1, node1_label)
+        self.add_vertex(node2, node2_label)
+        self.add_edge(node1, node2, edge_label)
+
+
     def get_distinct_label_tuples(self):
         tuples = []
         for v in self.vertices.values():
@@ -53,16 +60,25 @@ class Graph(object):
 if __name__ == '__main__':
     g = Graph(1)
 
-    g.add_vertex(10, 'a')
-    g.add_vertex(20, 'b')
-    g.add_vertex(30, 'a')
-    g.add_vertex(40, 'b')
+    # g.add_vertex(10, 'a')
+    # g.add_vertex(20, 'b')
+    # g.add_vertex(30, 'a')
+    # g.add_vertex(40, 'b')
+    #
+    # g.add_edge(10, 20, '_')
+    # g.add_edge(10, 30, '_')
+    # g.add_edge(20, 30, '_')
+    # g.add_edge(30, 40, '_')
+    #
+    # print "id: {}".format(g.id)
+    # for v in g:
+    #     print "{} {} {}".format(v.id, v.label, v.edges)
+    # print g.get_distinct_label_tuples()
 
-    g.add_edge(10, 20, '_')
-    g.add_edge(10, 30, '_')
-    g.add_edge(20, 30, '_')
-    g.add_edge(30, 40, '_')
-
+    code1 = (0, 1, 'a', 'a', '_')
+    code2 = (1, 2, 'b', 'a', '_')
+    g.add_ext(code1)
+    g.add_ext(code2)
     print "id: {}".format(g.id)
     for v in g:
         print "{} {} {}".format(v.id, v.label, v.edges)
