@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import graph
 import graph_reader
 
 
@@ -51,13 +52,31 @@ def right_most_path_extensions(C, D):
     return sorted(sup.items())
 
 
-def is_canonical(C_prime):
+def build_graph(C):
+    g = graph.Graph(1)
+    for t in C:
+        g.add_ext(t)
+    return g
+
+
+def is_canonical(C):
     """
 
-    :param C_prime:
+    :param C:
     :return:
     """
-    pass
+    Dc = [build_graph(C)]  # graph corresponding to code C
+    C_star = []
+    for t in C:
+        E = right_most_path_extensions(C_star, Dc)
+        # print "E in is_canonical: {}".format(E)
+        (s, sup) = min(E)
+        # print "(s, sup): {}".format((s,sup))
+        if s < t:
+            # print "returning False"
+            return False
+        C_star = C_star + [s]
+    return True
 
 
 def gSpan(C, D, minsup):
@@ -86,4 +105,5 @@ if __name__ == "__main__":
     # for (t, sup) in E:
     #     print t
     #     print sup
+    # print min(E)
     gSpan([], D, 2)
