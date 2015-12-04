@@ -9,10 +9,12 @@ class Vertex(object):
     def __init__(self, id, label):
         self.id = id
         self.label = label
+        self.neighbors = []
         self.edges = []
 
 
-    def add_edge(self, neighbor_label, edge_label):
+    def add_edge(self, neighbor, neighbor_label, edge_label):
+        self.neighbors.append(neighbor)
         edge = (self.label, neighbor_label, edge_label)  # might be an issue because it does not maintain vertex IDs
         self.edges.append(edge)
 
@@ -32,20 +34,20 @@ class Graph(object):
         self.vertices[v_id] = new_vertex
 
 
-    def add_edge(self, node1, node2, label=''):
+    def add_connection(self, node1, node2, label=''):
         if node1 not in self.vertices:
             self.add_vertex(node1)
         if node2 not in self.vertices:
             self.add_vertex(node2)
-        self.vertices[node1].add_edge(self.vertices[node2].label, label)
-        self.vertices[node2].add_edge(self.vertices[node1].label, label)
+        self.vertices[node1].add_connection(node2, self.vertices[node2].label, label)
+        self.vertices[node2].add_connection(node1, self.vertices[node1].label, label)
 
 
     def add_ext(self, t):
         node1, node2, node1_label, node2_label, edge_label = t
         self.add_vertex(node1, node1_label)
         self.add_vertex(node2, node2_label)
-        self.add_edge(node1, node2, edge_label)
+        self.add_connection(node1, node2, edge_label)
 
 
     def get_distinct_label_tuples(self):
@@ -61,6 +63,10 @@ class Graph(object):
         return [v.id for v in self.vertices.values() if v.label == label]
 
 
+    def get_neighbors(self, v_id):
+        return self.vertices[v_id].neighbors
+
+
 if __name__ == '__main__':
     g = Graph(1)
 
@@ -69,10 +75,10 @@ if __name__ == '__main__':
     g.add_vertex(30, 'a')
     g.add_vertex(40, 'b')
 
-    g.add_edge(10, 20, '_')
-    g.add_edge(10, 30, '_')
-    g.add_edge(20, 30, '_')
-    g.add_edge(30, 40, '_')
+    g.add_connection(10, 20, '_')
+    g.add_connection(10, 30, '_')
+    g.add_connection(20, 30, '_')
+    g.add_connection(30, 40, '_')
 
     print "id: {}".format(g.id)
     for v in g:

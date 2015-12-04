@@ -29,7 +29,7 @@ def graph_reader(filename):
             elif line.startswith("e"):
                 v1_id, v2_id, e_label = [e for e in line.split()[1:]]
                 # print v1_id, v2_id, e_label
-                g.add_edge(int(v1_id), int(v2_id), e_label)
+                g.add_connection(int(v1_id), int(v2_id), e_label)
         D.append(g)
     return D
 
