@@ -68,7 +68,7 @@ class Graph(object):
 
 
     def get_edge_label(self, node1, node2):
-        pass
+        return self.vertices[node1].edges[node2][2]
 
 
     def get_neighbors(self, v_id):
@@ -104,5 +104,8 @@ if __name__ == '__main__':
     # for v in g:
     #     print "{} {} {}".format(v.id, v.label, v.edges)
 
-    # # Test get_distinct_label_tuples()
+    # # Test get_distinct_label_tuples
     # print g.get_distinct_label_tuples()
+
+    # # Test get_edge_label
+    # print g.get_edge_label(10, 30)
