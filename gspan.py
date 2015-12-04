@@ -13,7 +13,20 @@ def sub_graph_isomorphism(C, G):
     :param G:
     :return:
     """
-    pass
+    phi = {i: [x] for i, x in enumerate(G.get_vertex_by_label(C[0][2]))}
+    # print phi
+    for t in C:
+        u, v, u_label, v_label, edge_label = t
+        phi_prime = []
+        for p in phi.values():
+            # print "p: {}".format(p)
+            # print "u: {}".format(u)
+            # print "p[u]: {}".format(p[u])
+            if v > u:
+                # forward edge
+                for x in G.get_neighbors(p[u]):
+                    if (x not in p) and (G.get_vertex_label(x) == v_label) and
+    #                 print "x: {}".format(x)
 
 
 def right_most_path_extensions(C, D):
@@ -28,22 +41,23 @@ def right_most_path_extensions(C, D):
     u_r = None  # rightmost child in C (DFS number)
     E = {}  # set of extensions from C
 
-    for g in D:
+    for G in D:
         if not C:
             # add distinct label tuples in Gi as forward extensions
-            E[g.id] = []
+            E[G.id] = []
             # distinct = 0
-            for dist_tuple in g.get_distinct_label_tuples():
-                E[g.id].append((0, 1) + dist_tuple)
-                # E[g.id][distinct] = (0, 1) + dist_tuple
+            for dist_tuple in G.get_distinct_label_tuples():
+                E[G.id].append((0, 1) + dist_tuple)
+                # E[G.id][distinct] = (0, 1) + dist_tuple
                 # distinct += 1
         else:
-            # psi = sub_graph_isomorphism(C, G)
-            pass
+            # print "C: {}".format(C[0][2])
+            phi = sub_graph_isomorphism(C, G)
+            # pass
     # compute the support of each extension
     sup = {}
-    for g in E.values():
-        for ext in g:
+    for G in E.values():
+        for ext in G:
             if ext not in sup:
                 sup[ext] = 1
             else:

@@ -10,13 +10,13 @@ class Vertex(object):
         self.id = id
         self.label = label
         self.neighbors = []
-        self.edges = []
+        self.edges = {}
 
 
     def add_edge(self, neighbor, neighbor_label, edge_label):
         self.neighbors.append(neighbor)
         edge = (self.label, neighbor_label, edge_label)  # might be an issue because it does not maintain vertex IDs
-        self.edges.append(edge)
+        self.edges[neighbor] = edge
 
 
 class Graph(object):
@@ -53,7 +53,7 @@ class Graph(object):
     def get_distinct_label_tuples(self):
         tuples = []
         for v in self.vertices.values():
-            tuples.extend(v.edges)
+            tuples.extend(v.edges.values())
         distinct = list(set(tuples))
         distinct.sort()
         return distinct
@@ -103,4 +103,6 @@ if __name__ == '__main__':
     # print "id: {}".format(g.id)
     # for v in g:
     #     print "{} {} {}".format(v.id, v.label, v.edges)
+
+    # # Test get_distinct_label_tuples()
     # print g.get_distinct_label_tuples()
