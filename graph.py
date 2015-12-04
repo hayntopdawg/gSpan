@@ -57,29 +57,36 @@ class Graph(object):
         return distinct
 
 
+    def get_vertex_by_label(self, label):
+        return [v.id for v in self.vertices.values() if v.label == label]
+
+
 if __name__ == '__main__':
     g = Graph(1)
 
-    # g.add_vertex(10, 'a')
-    # g.add_vertex(20, 'b')
-    # g.add_vertex(30, 'a')
-    # g.add_vertex(40, 'b')
-    #
-    # g.add_edge(10, 20, '_')
-    # g.add_edge(10, 30, '_')
-    # g.add_edge(20, 30, '_')
-    # g.add_edge(30, 40, '_')
-    #
+    g.add_vertex(10, 'a')
+    g.add_vertex(20, 'b')
+    g.add_vertex(30, 'a')
+    g.add_vertex(40, 'b')
+
+    g.add_edge(10, 20, '_')
+    g.add_edge(10, 30, '_')
+    g.add_edge(20, 30, '_')
+    g.add_edge(30, 40, '_')
+
+    print "id: {}".format(g.id)
+    for v in g:
+        print "{} {} {}".format(v.id, v.label, v.edges)
+    print ""
+    # print g.get_vertex_by_label('a')  # Test get_vertex_by_label
+    # print g.get_distinct_label_tuples()  # Test get_distinct_label_tuples
+
+    # # Test add_ext
+    # code1 = (0, 1, 'a', 'a', '_')
+    # code2 = (1, 2, 'b', 'a', '_')
+    # g.add_ext(code1)
+    # g.add_ext(code2)
     # print "id: {}".format(g.id)
     # for v in g:
     #     print "{} {} {}".format(v.id, v.label, v.edges)
     # print g.get_distinct_label_tuples()
-
-    code1 = (0, 1, 'a', 'a', '_')
-    code2 = (1, 2, 'b', 'a', '_')
-    g.add_ext(code1)
-    g.add_ext(code2)
-    print "id: {}".format(g.id)
-    for v in g:
-        print "{} {} {}".format(v.id, v.label, v.edges)
-    print g.get_distinct_label_tuples()

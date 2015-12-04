@@ -6,11 +6,11 @@ import graph_reader
 __author__ = 'Jamie Fujimoto'
 
 
-def sub_graph_isomorphism(C, Gi):
+def sub_graph_isomorphism(C, G):
     """
 
     :param C:
-    :param Gi:
+    :param G:
     :return:
     """
     pass
