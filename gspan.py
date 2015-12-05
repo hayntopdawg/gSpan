@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+
+import copy
 import graph
 import graph_reader
 
@@ -14,12 +16,15 @@ def sub_graph_isomorphism(C, G):
     :return:
     """
     # print "C: {}".format(C)
-    phi = {i: [x] for i, x in enumerate(G.get_vertex_by_label(C[0][2]))}
-    # print phi
+    # phi = {i: [x] for i, x in enumerate(G.get_vertex_by_label(C[0][2]))}
+    phi = [ [x] for x in G.get_vertex_by_label(C[0][2]) ]  # changed from dict to list
+    # print "phi: {}".format(phi)
     for t in C:
         u, v, u_label, v_label, edge_label = t
-        phi_prime = {}
-        for p in phi.values():
+        # phi_prime = {}  # changed from dict to list
+        phi_prime = []
+        # for p in phi.values():  # changed from dict to list
+        for p in phi:
             # print "p: {}".format(p)
             # print "u: {}".format(u)
             # print "p[u]: {}".format(p[u])
@@ -30,12 +35,19 @@ def sub_graph_isomorphism(C, G):
                         G.get_vertex_label(x) == v_label) and (
                         G.get_edge_label(p[u], x) == edge_label):
                         # print "x: {}".format(x)
-                        pass
-                        ### left off here ###
+                        p_prime = p + [x]
+                        # print "p_prime: {}".format(p_prime)
+                        phi_prime.append(p_prime)
+                        # print "phi_prime: {}".format(phi_prime)
             else:
                 # backward edge
-                pass
-    # print phi_prime
+                # print "p[v]: {}".format(p[v])
+                if p[v] in G.get_neighbors(p[u]):
+                    phi_prime.append(p)
+                    # print "phi_prime: {}".format(phi_prime)
+        phi = copy.copy(phi_prime)
+        # print "updated phi: {}".format(phi)
+    return copy.copy(phi)
 
 
 def right_most_path_extensions(C, D):
@@ -140,8 +152,12 @@ if __name__ == "__main__":
     #     print "t: {}, sup: {}".format(t, sup)
     # print "Smallest t: {}".format(min(E))
 
-    gSpan([], D, 2)
+    # gSpan([], D, 2)
 
-    # Test sub_graph
+    # # Test sub_graph forward edge
     # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_')]
     # sub_graph_isomorphism(C, D[0])
+
+    # Test sub_graph backward edge
+    C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_'), (2, 0, 'b', 'a', '_')]
+    sub_graph_isomorphism(C, D[0])
