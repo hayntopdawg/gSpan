@@ -188,7 +188,11 @@ def gSpan(C, D, minsup):
 
     print "pattern {}".format(num_call)
     num_call += 1
-    print C
+    if not C:
+        print "()"
+    for t in C:
+        print t
+    print ""
 
     E = right_most_path_extensions(C, D)
     for (t, sup) in E:
@@ -199,7 +203,8 @@ def gSpan(C, D, minsup):
 
 
 if __name__ == "__main__":
-    D = graph_reader.graph_reader("exampleG.txt")
+    # D = graph_reader.graph_reader("exampleG.txt")
+    D = graph_reader.graph_reader("Compound_422.txt")
     gSpan([], D, 2)
 
     # # Test right_most_path without support count
