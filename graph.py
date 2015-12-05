@@ -48,8 +48,10 @@ class Graph(object):
 
     def add_ext(self, t):
         node1, node2, node1_label, node2_label, edge_label = t
-        self.add_vertex(node1, node1_label)
-        self.add_vertex(node2, node2_label)
+        if node1 not in self.vertices:
+            self.add_vertex(node1, node1_label)
+        if node2 not in self.vertices:
+            self.add_vertex(node2, node2_label)
         self.add_connection(node1, node2, edge_label)
 
 
@@ -102,8 +104,12 @@ if __name__ == '__main__':
     # Test add_ext
     code1 = (0, 1, 'a', 'a', '_')
     code2 = (1, 2, 'a', 'b', '_')
+    code3 = (2, 0, 'b', 'a', '_')
+    code4 = (0, 3, 'a', 'b', '_')
     g.add_ext(code1)
     g.add_ext(code2)
+    g.add_ext(code3)
+    g.add_ext(code4)
     for v in g:
         print "{} {} {}".format(v.id, v.label, v.edges)
 

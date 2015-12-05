@@ -30,6 +30,7 @@ def sub_graph_isomorphisms(C, G):
     phi = [[x] for x in G.get_vertex_by_label(C[0][2])]  # changed from dict to list
     # print "phi: {}".format(phi)
     for t in C:
+        # print "t: {}".format(t)
         u, v, u_label, v_label, edge_label = t
         # phi_prime = {}  # changed from dict to list
         phi_prime = []
@@ -75,11 +76,14 @@ def right_most_path_extensions(C, D):
     if R:
         u_r = R[-1]  # rightmost child in C (DFS number)
     else:
-        u_r = None
+        u_r = 0
     # print "u_r: {}".format(u_r)
     E = {}  # set of extensions from C
 
     for G in D:
+        # print "G:"
+        # for v in G:
+        #     print "{} {} {}".format(v.id, v.label, v.edges)
         E[G.id] = []
         if not C:
             # add distinct label tuples in Gi as forward extensions
@@ -92,6 +96,7 @@ def right_most_path_extensions(C, D):
         else:
             # print "C: {}".format(C[0][2])
             phi = sub_graph_isomorphisms(C, G)
+            # print "phi: {}".format(phi)
             for p in phi:  # for each isomorphism in phi
                 # print "C: {}".format(C)
                 # print "p: {}".format(p)
@@ -245,20 +250,24 @@ def is_canonical(C):
     :return:
     """
     # print "C in is_canonical: {}".format(C)
-    Dc = [build_graph(C)]  # graph corresponding to code C
+    Gc = build_graph(C)
+    # print "Gc:"
+    # for v in Gc:
+    #     print "{} {} {}".format(v.id, v.label, v.edges)
+    Dc = [Gc]  # graph corresponding to code C
     C_star = []
     for t in C:
         # print "t in is_canonical: {}".format(t)
         E = right_most_path_extensions(C_star, Dc)
         # print "E in is_canonical: {}".format(E)
         s, sup = find_min_edge(E)
-        # print "(s, sup): {}".format((s,sup))
+        # print "min edge: {}".format((s,sup))
         if is_smaller(s, t):
             # print "{} is not canonical. {} is smaller".format(t, s)
             return False
         if s:  # removes empty list
             C_star.append(s)
-        # print "C_star in is_canonical: {}".format(C_star)
+        # print "C_star in is_canonical: {}\n".format(C_star)
     # print "{} is canonical".format(t)
     return True
 
@@ -282,6 +291,7 @@ def gSpan(C, D, minsup):
     # print "E: {}".format(E)
     for (t, sup) in E:
         C_prime = C + [t]
+        # print "C_prime: {}".format(C_prime)
         sup_C_prime = sup
         if sup_C_prime >= minsup and is_canonical(C_prime):
             gSpan(C_prime, D, minsup)
@@ -331,6 +341,10 @@ if __name__ == "__main__":
     # C = [(0, 1, 'a', 'a', '_'), (0, 2, 'a', 'b', '_')]
     # print is_canonical(C)
 
-    # # Test is_canonical
+    # # Test is_canonical 2
     # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_'), (2, 0, 'b', 'a', '_')]
+    # print is_canonical(C)
+
+    # # Test is_canonical 3
+    # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_'), (2, 0, 'b', 'a', '_'), (0, 3, 'a', 'b', '_')]
     # print is_canonical(C)
