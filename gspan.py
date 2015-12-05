@@ -24,7 +24,7 @@ def sub_graph_isomorphisms(C, G):
     """
     # print "C: {}".format(C)
     # phi = {i: [x] for i, x in enumerate(G.get_vertex_by_label(C[0][2]))}
-    phi = [ [x] for x in G.get_vertex_by_label(C[0][2]) ]  # changed from dict to list
+    phi = [[x] for x in G.get_vertex_by_label(C[0][2])]  # changed from dict to list
     # print "phi: {}".format(phi)
     for t in C:
         u, v, u_label, v_label, edge_label = t
@@ -38,9 +38,9 @@ def sub_graph_isomorphisms(C, G):
             if v > u:
                 # forward edge
                 for x in G.get_neighbors(p[u]):
-                    if (x not in p) and (
-                        G.get_vertex_label(x) == v_label) and (
-                        G.get_edge_label(p[u], x) == edge_label):
+                    if (x not in p) and \
+                       (G.get_vertex_label(x) == v_label) and \
+                       (G.get_edge_label(p[u], x) == edge_label):
                         # print "x: {}".format(x)
                         p_prime = p + [x]
                         # print "p_prime: {}".format(p_prime)
@@ -77,9 +77,10 @@ def right_most_path_extensions(C, D):
     E = {}  # set of extensions from C
 
     for G in D:
+        E[G.id] = []
         if not C:
             # add distinct label tuples in Gi as forward extensions
-            E[G.id] = []
+            # E[G.id] = []
             # distinct = 0
             for dist_tuple in G.get_distinct_label_tuples():
                 E[G.id].append((0, 1) + dist_tuple)
@@ -92,6 +93,7 @@ def right_most_path_extensions(C, D):
                 # print "C: {}".format(C)
                 # print "p: {}".format(p)
                 # print "u_r: {}".format(u_r)
+
                 # backward extensions from rightmost child
                 # print "neighbors: {}".format(G.get_neighbors(p[u_r]))
                 for x in G.get_neighbors(p[u_r]):
@@ -101,11 +103,19 @@ def right_most_path_extensions(C, D):
                     valid_v = [v for v in vs if (p[v] == x) and (v in R) and ((u_r, v) not in Gc.connections)]
                     # print "valid_v: {}".format(valid_v)
                     for v in valid_v:
-                            # print G.connections
-                            b = (u_r, v, Gc.get_vertex_label(u_r), Gc.get_vertex_label(v), G.get_edge_label(p[u_r], p[v]))
-                            E[G.id] = [b]
+                        # print G.connections
+                        b = (u_r, v, Gc.get_vertex_label(u_r), Gc.get_vertex_label(v), G.get_edge_label(p[u_r], p[v]))
+                        E[G.id].append(b)
 
                 # forward extension from nodes on rightmost path
+                for u in R:
+                    print "u: {} label: {}".format(u, Gc.get_vertex_label(u))
+                    neigbors = [n for n in G.get_neighbors(p[u]) if n not in p]
+                    print "neighbors: {}".format(neigbors)
+                    for x in neigbors:
+                        print "x: {} label: {}".format(x, G.get_vertex_label(x))
+                        E[G.id].append((u, u_r + 1, Gc.get_vertex_label(u), G.get_vertex_label(x), G.get_edge_label(p[u], x)))
+
             # print "E: {}".format(E)
     # compute the support of each extension
     sup = {}
@@ -162,12 +172,12 @@ if __name__ == "__main__":
     # # Test right_most_path without support count
     # E = right_most_path_extensions(None, D)
     # for g in E.values():
-    #     print g
+    # print g
 
     # # Test right_most_path with support count
     # E = right_most_path_extensions([], D)
     # for t, sup in E:
-    #     print "t: {}, sup: {}".format(t, sup)
+    # print "t: {}, sup: {}".format(t, sup)
     # print "Smallest t: {}".format(min(E))
 
     # gSpan([], D, 2)
