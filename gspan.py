@@ -8,7 +8,14 @@ import graph_reader
 __author__ = 'Jamie Fujimoto'
 
 
-def sub_graph_isomorphism(C, G):
+def build_graph(C):
+    g = graph.Graph(1)
+    for t in C:
+        g.add_ext(t)
+    return g
+
+
+def sub_graph_isomorphisms(C, G):
     """
 
     :param C:
@@ -58,9 +65,9 @@ def right_most_path_extensions(C, D):
     :return: set of edge extensions along with their support values
     """
 
-    g = build_graph(C)
+    Gc = build_graph(C)
     # print "C: {}".format(C)
-    R = [v.id for v in g]  # nodes on the rightmost path in C
+    R = [v.id for v in Gc]  # nodes on the rightmost path in C
     # print "R: {}".format(R)
     if R:
         u_r = R[-1]  # rightmost child in C (DFS number)
@@ -80,8 +87,26 @@ def right_most_path_extensions(C, D):
                 # distinct += 1
         else:
             # print "C: {}".format(C[0][2])
-            phi = sub_graph_isomorphism(C, G)
-            # pass
+            phi = sub_graph_isomorphisms(C, G)
+            for p in phi:  # for each isomorphism in phi
+                # print "C: {}".format(C)
+                # print "p: {}".format(p)
+                # print "u_r: {}".format(u_r)
+                # backward extensions from rightmost child
+                # print "neighbors: {}".format(G.get_neighbors(p[u_r]))
+                for x in G.get_neighbors(p[u_r]):
+                    # print "x = {} label: {}".format(x, G.get_vertex_label(x))
+                    vs = Gc.get_vertex_by_label(G.get_vertex_label(x))
+                    # print "vs = {}".format(Gc.get_vertex_by_label(G.get_vertex_label(x)))
+                    valid_v = [v for v in vs if (p[v] == x) and (v in R) and ((u_r, v) not in Gc.connections)]
+                    # print "valid_v: {}".format(valid_v)
+                    for v in valid_v:
+                            # print G.connections
+                            b = (u_r, v, Gc.get_vertex_label(u_r), Gc.get_vertex_label(v), G.get_edge_label(p[u_r], p[v]))
+                            E[G.id] = [b]
+
+                # forward extension from nodes on rightmost path
+            # print "E: {}".format(E)
     # compute the support of each extension
     sup = {}
     for G in E.values():
@@ -92,13 +117,6 @@ def right_most_path_extensions(C, D):
                 sup[ext] += 1
     # return E
     return sorted(sup.items())
-
-
-def build_graph(C):
-    g = graph.Graph(1)
-    for t in C:
-        g.add_ext(t)
-    return g
 
 
 def is_canonical(C):
@@ -156,8 +174,14 @@ if __name__ == "__main__":
 
     # # Test sub_graph forward edge
     # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_')]
-    # sub_graph_isomorphism(C, D[0])
+    # sub_graph_isomorphisms(C, D[0])
 
-    # Test sub_graph backward edge
-    C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_'), (2, 0, 'b', 'a', '_')]
-    sub_graph_isomorphism(C, D[0])
+    # # Test sub_graph backward edge
+    # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_'), (2, 0, 'b', 'a', '_')]
+    # sub_graph_isomorphisms(C, D[0])
+
+    # # Test right_most_path
+    # E = right_most_path_extensions([(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_')], D)
+    # for t, sup in E:
+    #     print "t: {}, sup: {}".format(t, sup)
+    # print "Smallest t: {}".format(min(E))

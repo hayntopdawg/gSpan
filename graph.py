@@ -23,6 +23,7 @@ class Graph(object):
     def __init__(self, id):
         self.id = id
         self.vertices = {}
+        self.connections = []
 
 
     def __iter__(self):
@@ -40,7 +41,9 @@ class Graph(object):
         if node2 not in self.vertices:
             self.add_vertex(node2)
         self.vertices[node1].add_edge(node2, self.vertices[node2].label, label)
+        self.connections.append((node1, node2))
         self.vertices[node2].add_edge(node1, self.vertices[node1].label, label)
+        self.connections.append((node2, node1))
 
 
     def add_ext(self, t):
@@ -68,6 +71,7 @@ class Graph(object):
 
 
     def get_edge_label(self, node1, node2):
+        # print "vertex edges: {}".format(self.vertices[node1].edges)
         return self.vertices[node1].edges[node2][2]
 
 
@@ -78,31 +82,34 @@ class Graph(object):
 if __name__ == '__main__':
     g = Graph(1)
 
-    g.add_vertex(10, 'a')
-    g.add_vertex(20, 'b')
-    g.add_vertex(30, 'a')
-    g.add_vertex(40, 'b')
+    # g.add_vertex(10, 'a')
+    # g.add_vertex(20, 'b')
+    # g.add_vertex(30, 'a')
+    # g.add_vertex(40, 'b')
+    #
+    # g.add_connection(10, 20, '_')
+    # g.add_connection(10, 30, '_')
+    # g.add_connection(20, 30, '_')
+    # g.add_connection(30, 40, '_')
 
-    g.add_connection(10, 20, '_')
-    g.add_connection(10, 30, '_')
-    g.add_connection(20, 30, '_')
-    g.add_connection(30, 40, '_')
-
-    print "id: {}".format(g.id)
-    for v in g:
-        print "{} {} {}".format(v.id, v.label, v.edges)
-    print ""
-    # print g.get_vertex_by_label('a')  # Test get_vertex_by_label
-    # print g.get_distinct_label_tuples()  # Test get_distinct_label_tuples
-
-    # # Test add_ext
-    # code1 = (0, 1, 'a', 'a', '_')
-    # code2 = (1, 2, 'b', 'a', '_')
-    # g.add_ext(code1)
-    # g.add_ext(code2)
     # print "id: {}".format(g.id)
     # for v in g:
     #     print "{} {} {}".format(v.id, v.label, v.edges)
+    # print ""
+    # print g.get_vertex_by_label('a')  # Test get_vertex_by_label
+    # print g.get_distinct_label_tuples()  # Test get_distinct_label_tuples
+
+    # Test add_ext
+    code1 = (0, 1, 'a', 'a', '_')
+    code2 = (1, 2, 'a', 'b', '_')
+    g.add_ext(code1)
+    g.add_ext(code2)
+    for v in g:
+        print "{} {} {}".format(v.id, v.label, v.edges)
+
+    # # Test connections
+    # if (2, 0) in g.connections: print True
+    # if (1, 2) in g.connections: print True
 
     # # Test get_distinct_label_tuples
     # print g.get_distinct_label_tuples()
