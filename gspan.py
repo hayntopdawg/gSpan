@@ -8,6 +8,9 @@ import graph_reader
 __author__ = 'Jamie Fujimoto'
 
 
+num_call = 0
+
+
 def build_graph(C):
     g = graph.Graph(1)
     for t in C:
@@ -109,11 +112,11 @@ def right_most_path_extensions(C, D):
 
                 # forward extension from nodes on rightmost path
                 for u in R:
-                    print "u: {} label: {}".format(u, Gc.get_vertex_label(u))
+                    # print "u: {} label: {}".format(u, Gc.get_vertex_label(u))
                     neigbors = [n for n in G.get_neighbors(p[u]) if n not in p]
-                    print "neighbors: {}".format(neigbors)
+                    # print "neighbors: {}".format(neigbors)
                     for x in neigbors:
-                        print "x: {} label: {}".format(x, G.get_vertex_label(x))
+                        # print "x: {} label: {}".format(x, G.get_vertex_label(x))
                         E[G.id].append((u, u_r + 1, Gc.get_vertex_label(u), G.get_vertex_label(x), G.get_edge_label(p[u], x)))
 
             # print "E: {}".format(E)
@@ -129,23 +132,116 @@ def right_most_path_extensions(C, D):
     return sorted(sup.items())
 
 
+def find_min_edge(E):
+    min_edge, min_edge_sup = [], 0
+    for (edge, sup) in E:
+        if not min_edge:
+            min_edge, min_edge_sup = edge, sup
+        # # (i, j) = (x, y)
+        # elif min_edge[0] == edge[0] and min_edge[1] == edge[1]:
+        #     if edge < min_edge:
+        #         min_edge, min_edge_sup = edge, sup
+        else:
+            # if edge is smaller than min_edge
+            if is_smaller(edge, min_edge):
+                min_edge, min_edge_sup = edge, sup
+            # # Condition 1 (Both forward edges)
+            # if min_edge[0] < min_edge[1] and edge[0] < edge[1]:
+            #     # (a) j < y
+            #     if edge[1] < min_edge[1]:
+            #         min_edge, min_edge_sup = edge, sup
+            #     # (b) j = y and i > x
+            #     elif edge[1] == min_edge[1] and edge[0] > min_edge[0]:
+            #         min_edge, min_edge_sup = edge, sup
+            # # Condition 2 (Both backward edges)
+            # elif min_edge[0] > min_edge[1] and edge[0] > edge[1]:
+            #     # (a) i < x
+            #     if edge[0] < min_edge[0]:
+            #         min_edge, min_edge_sup = edge, sup
+            #     # (b) i = x and j < y
+            #     elif edge[0] == min_edge[0] and edge[1] < min_edge[1]:
+            #         min_edge, min_edge_sup = edge, sup
+            # # Condition 3 (e_ij is forward edge and e_xy is backward edge)
+            # elif edge[0] < edge[1] and min_edge[0] > min_edge[1]:
+            #     # j <= x
+            #     if edge[1] <= min_edge[0]:
+            #         min_edge, min_edge_sup = edge, sup
+            # # Condition 4 (e_ij is backward edge and e_xy is forward edge)
+            # elif edge[0] > edge[1] and min_edge[0] < min_edge[1]:
+            #     # i < y
+            #     if edge[0] < min_edge[1]:
+            #         min_edge, min_edge_sup = edge, sup
+    # print "E: {}".format(E)
+    return min_edge, min_edge_sup
+
+
+def is_smaller(s, t):
+    # print "s: {} t: {}".format(s, t)
+    if not s:
+        return True  # Should this be True or False?  Or not needed if right most is fixed?
+    # (i, j) = (x, y)
+    elif s[0] == t[0] and s[1] == t[1]:
+        if s < t:
+            return True
+        else:
+            return False
+    else:
+        # Condition 1 (Both forward edges)
+        if s[0] < s[1] and t[0] < t[1]:
+            # (a) j < y
+            if s[1] < t[1]:
+                return True
+            # (b) j = y and i > x
+            elif s[1] == t[1] and s[0] > t[0]:
+                return True
+            else:
+                return False
+        # Condition 2 (Both backward edges)
+        elif s[0] > s[1] and t[0] > t[1]:
+            # (a) i < x
+            if s[0] < t[0]:
+                return True
+            # (b) i = x and j < y
+            elif s[0] == t[0] and s[1] < t[1]:
+                return True
+            else:
+                return False
+        # Condition 3 (e_ij is forward edge and e_xy is backward edge)
+        elif s[0] < s[1] and t[0] > t[1]:
+            # j <= x
+            if s[1] <= t[0]:
+                return True
+            else:
+                return False
+        # Condition 4 (e_ij is backward edge and e_xy is forward edge)
+        elif s[0] > s[1] and t[0] < t[1]:
+            # i < y
+            if s[0] < t[1]:
+                return True
+            else:
+                return False
+
+
 def is_canonical(C):
     """
 
     :param C:
     :return:
     """
+    print "C in is_canonical: {}".format(C)
     Dc = [build_graph(C)]  # graph corresponding to code C
     C_star = []
     for t in C:
+        print "t in is_canonical: {}".format(t)
         E = right_most_path_extensions(C_star, Dc)
-        # print "E in is_canonical: {}".format(E)
-        (s, sup) = min(E)
-        # print "(s, sup): {}".format((s,sup))
-        if s < t:
-            # print "returning False"
+        print "E in is_canonical: {}".format(E)
+        s, sup = find_min_edge(E)
+        print "(s, sup): {}".format((s,sup))
+        if is_smaller(s, t):
+            print "returning False"
             return False
-        C_star = C_star + [s]
+        C_star.append(s)
+        print "C_star in is_canonical: {}".format(C_star)
     return True
 
 
@@ -158,7 +254,14 @@ def gSpan(C, D, minsup):
     :param minsup: minimum support threshold
     :return:
     """
+    global num_call
+
+    print "pattern {}".format(num_call)
+    num_call += 1
+    print C
+
     E = right_most_path_extensions(C, D)
+    # print "E: {}".format(E)
     for (t, sup) in E:
         C_prime = C + [t]
         sup_C_prime = sup
@@ -168,6 +271,7 @@ def gSpan(C, D, minsup):
 
 if __name__ == "__main__":
     D = graph_reader.graph_reader("exampleG.txt")
+    gSpan([], D, 2)
 
     # # Test right_most_path without support count
     # E = right_most_path_extensions(None, D)
@@ -179,8 +283,6 @@ if __name__ == "__main__":
     # for t, sup in E:
     # print "t: {}, sup: {}".format(t, sup)
     # print "Smallest t: {}".format(min(E))
-
-    # gSpan([], D, 2)
 
     # # Test sub_graph forward edge
     # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_')]
@@ -195,3 +297,17 @@ if __name__ == "__main__":
     # for t, sup in E:
     #     print "t: {}, sup: {}".format(t, sup)
     # print "Smallest t: {}".format(min(E))
+
+    # # Test find_min_edge
+    # E = [((1, 2, 'a', 'b', '_'), 1), ((0, 2, 'a', 'b', '_'), 1)] # test 2 forward
+    # E = [((8, 5, 'a', 'b', '_'), 1), ((8, 1, 'a', 'b', '_'), 1)] # test 2 backward
+    # E = [((7, 9, 'a', 'b', '_'), 1), ((8, 5, 'a', 'b', '_'), 1)] # test forward, backward
+    # E = [((8, 5, 'a', 'b', '_'), 1), ((7, 9, 'a', 'b', '_'), 1)] # test backward, forward
+    # E = [((0, 1, 'a', 'b', '_'), 1), ((0, 1, 'a', 'a', '_'), 1)] # test labels 1
+    # E = [((0, 1, 'b', 'a', '_'), 1), ((0, 1, 'a', 'b', '_'), 1)] # test labels 2
+    # E = [((0, 1, 'b', 'a', '_'), 1), ((0, 1, 'a', 'c', '_'), 1)] # test labels 3
+    # print find_min_edge(E)
+
+    # # Test is_canonical
+    # C = [(0, 1, 'a', 'a', '_'), (0, 2, 'a', 'b', '_')]
+    # print is_canonical(C)
