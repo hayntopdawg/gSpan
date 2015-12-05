@@ -8,7 +8,7 @@ import graph_reader
 __author__ = 'Jamie Fujimoto'
 
 
-num_call = 0
+num_call = 1
 
 
 def build_graph(C):
@@ -59,7 +59,7 @@ def sub_graph_isomorphisms(C, G):
         # print "updated phi: {}".format(phi)
     return copy.copy(phi)
 
-
+# why does right most path return empty lists?
 def right_most_path_extensions(C, D):
     """
 
@@ -122,14 +122,30 @@ def right_most_path_extensions(C, D):
             # print "E: {}".format(E)
     # compute the support of each extension
     sup = {}
-    for G in E.values():
-        for ext in G:
+    # print "E: {}".format(E)
+    for G in E:
+        # make each list of tuples distinct
+        distinct_exts = list(set(E[G]))
+        # print "distinct_exts: {}".format(distinct_exts)
+        for ext in distinct_exts:
             if ext not in sup:
                 sup[ext] = 1
             else:
                 sup[ext] += 1
     # return E
-    return sorted(sup.items())
+    # print "sup.items(): {}".format(sup.items())
+    sorted_tuples = sort_tuples(sup.items())
+    # print "sorted_tuples: {}".format(sorted_tuples)
+    return sorted_tuples
+
+
+def sort_tuples(E):
+    sorted_E = []
+    while len(E) > 0:
+        min_tuple = find_min_edge(E)
+        sorted_E.append(min_tuple)
+        E.remove(min_tuple)
+    return copy.copy(sorted_E)
 
 
 def find_min_edge(E):
@@ -178,7 +194,7 @@ def find_min_edge(E):
 def is_smaller(s, t):
     # print "s: {} t: {}".format(s, t)
     if not s:
-        return True  # Should this be True or False?  Or not needed if right most is fixed?
+        return False  # Should this be True or False?  Or not needed if right most is fixed?
     # (i, j) = (x, y)
     elif s[0] == t[0] and s[1] == t[1]:
         if s < t:
@@ -228,20 +244,22 @@ def is_canonical(C):
     :param C:
     :return:
     """
-    print "C in is_canonical: {}".format(C)
+    # print "C in is_canonical: {}".format(C)
     Dc = [build_graph(C)]  # graph corresponding to code C
     C_star = []
     for t in C:
-        print "t in is_canonical: {}".format(t)
+        # print "t in is_canonical: {}".format(t)
         E = right_most_path_extensions(C_star, Dc)
-        print "E in is_canonical: {}".format(E)
+        # print "E in is_canonical: {}".format(E)
         s, sup = find_min_edge(E)
-        print "(s, sup): {}".format((s,sup))
+        # print "(s, sup): {}".format((s,sup))
         if is_smaller(s, t):
-            print "returning False"
+            # print "{} is not canonical. {} is smaller".format(t, s)
             return False
-        C_star.append(s)
-        print "C_star in is_canonical: {}".format(C_star)
+        if s:  # removes empty list
+            C_star.append(s)
+        # print "C_star in is_canonical: {}".format(C_star)
+    # print "{} is canonical".format(t)
     return True
 
 
@@ -293,10 +311,11 @@ if __name__ == "__main__":
     # sub_graph_isomorphisms(C, D[0])
 
     # # Test right_most_path
-    # E = right_most_path_extensions([(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_')], D)
+    # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_'), (2, 0, 'b', 'a', '_')]
+    # E = right_most_path_extensions(C, D)
+    # print E
     # for t, sup in E:
     #     print "t: {}, sup: {}".format(t, sup)
-    # print "Smallest t: {}".format(min(E))
 
     # # Test find_min_edge
     # E = [((1, 2, 'a', 'b', '_'), 1), ((0, 2, 'a', 'b', '_'), 1)] # test 2 forward
@@ -310,4 +329,8 @@ if __name__ == "__main__":
 
     # # Test is_canonical
     # C = [(0, 1, 'a', 'a', '_'), (0, 2, 'a', 'b', '_')]
+    # print is_canonical(C)
+
+    # # Test is_canonical
+    # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_'), (2, 0, 'b', 'a', '_')]
     # print is_canonical(C)
