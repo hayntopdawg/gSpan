@@ -13,11 +13,12 @@ def sub_graph_isomorphism(C, G):
     :param G:
     :return:
     """
+    # print "C: {}".format(C)
     phi = {i: [x] for i, x in enumerate(G.get_vertex_by_label(C[0][2]))}
     # print phi
     for t in C:
         u, v, u_label, v_label, edge_label = t
-        phi_prime = []
+        phi_prime = {}
         for p in phi.values():
             # print "p: {}".format(p)
             # print "u: {}".format(u)
@@ -25,8 +26,16 @@ def sub_graph_isomorphism(C, G):
             if v > u:
                 # forward edge
                 for x in G.get_neighbors(p[u]):
-                    if (x not in p) and (G.get_vertex_label(x) == v_label) and
-    #                 print "x: {}".format(x)
+                    if (x not in p) and (
+                        G.get_vertex_label(x) == v_label) and (
+                        G.get_edge_label(p[u], x) == edge_label):
+                        # print "x: {}".format(x)
+                        pass
+                        ### left off here ###
+            else:
+                # backward edge
+                pass
+    # print phi_prime
 
 
 def right_most_path_extensions(C, D):
@@ -37,8 +46,15 @@ def right_most_path_extensions(C, D):
     :return: set of edge extensions along with their support values
     """
 
-    R = None  # nodes on the rightmost path in C
-    u_r = None  # rightmost child in C (DFS number)
+    g = build_graph(C)
+    # print "C: {}".format(C)
+    R = [v.id for v in g]  # nodes on the rightmost path in C
+    # print "R: {}".format(R)
+    if R:
+        u_r = R[-1]  # rightmost child in C (DFS number)
+    else:
+        u_r = None
+    # print "u_r: {}".format(u_r)
     E = {}  # set of extensions from C
 
     for G in D:
@@ -112,12 +128,20 @@ def gSpan(C, D, minsup):
 
 if __name__ == "__main__":
     D = graph_reader.graph_reader("exampleG.txt")
+
+    # # Test right_most_path without support count
     # E = right_most_path_extensions(None, D)
     # for g in E.values():
     #     print g
+
+    # # Test right_most_path with support count
     # E = right_most_path_extensions([], D)
-    # for (t, sup) in E:
-    #     print t
-    #     print sup
-    # print min(E)
+    # for t, sup in E:
+    #     print "t: {}, sup: {}".format(t, sup)
+    # print "Smallest t: {}".format(min(E))
+
     gSpan([], D, 2)
+
+    # Test sub_graph
+    # C = [(0, 1, 'a', 'a', '_'), (1, 2, 'a', 'b', '_')]
+    # sub_graph_isomorphism(C, D[0])
