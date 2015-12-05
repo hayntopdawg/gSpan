@@ -74,7 +74,6 @@ class Graph(object):
 
 
     def get_edge_label(self, node1, node2):
-        # print "vertex edges: {}".format(self.vertices[node1].edges)
         return self.vertices[node1].edges[node2][2]
 
 

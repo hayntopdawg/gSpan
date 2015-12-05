@@ -19,18 +19,15 @@ def graph_reader(filename):
                 if count > 0:
                     D.append(g)
                 _, g_id = [e for e in line.split()[1:]]
-                # print g_id
                 g = graph.Graph(int(g_id))
                 count += 1
 
             elif line.startswith("v"):  # assumes v will always come after a t
                 v_id, v_label = [e for e in line.split()[1:]]
-                # print v_id, v_label
                 g.add_vertex(int(v_id), v_label)
 
             elif line.startswith("e"):
                 v1_id, v2_id, e_label = [e for e in line.split()[1:]]
-                # print v1_id, v2_id, e_label
                 g.add_connection(int(v1_id), int(v2_id), e_label)
         D.append(g)
     return D
