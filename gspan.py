@@ -12,6 +12,7 @@ num_call = 1
 
 
 def build_graph(C):
+    """ Builds a graph using code C. """
     g = graph.Graph(1)
     for t in C:
         g.add_ext(t)
@@ -19,12 +20,7 @@ def build_graph(C):
 
 
 def sub_graph_isomorphisms(C, G):
-    """
-
-    :param C:
-    :param G:
-    :return:
-    """
+    """ Returns all of the possible isomorphisms for code C in graph G. """
     # print "C: {}".format(C)
     # phi = {i: [x] for i, x in enumerate(G.get_vertex_by_label(C[0][2]))}
     phi = [[x] for x in G.get_vertex_by_label(C[0][2])]  # changed from dict to list
@@ -62,12 +58,7 @@ def sub_graph_isomorphisms(C, G):
 
 # why does right most path return empty lists?
 def right_most_path_extensions(C, D):
-    """
-
-    :param C: a canonical and frequent code
-    :param D: a database of n graphs
-    :return: set of edge extensions along with their support values
-    """
+    """ Returns all possible extensions for the right most path with their respective supports. """
 
     Gc = build_graph(C)
     # print "C: {}".format(C)
@@ -244,11 +235,8 @@ def is_smaller(s, t):
 
 
 def is_canonical(C):
-    """
+    """ Checks if code C is canonical """
 
-    :param C:
-    :return:
-    """
     # print "C in is_canonical: {}".format(C)
     Gc = build_graph(C)
     # print "Gc:"
@@ -274,13 +262,14 @@ def is_canonical(C):
 
 def gSpan(C, D, minsup):
     """
-    First determines the set of possible edge extensions along the rightmost path.
+    Recursively mines a database of graphs to determine all frequent subgraphs.
 
-    :param C: a canonical and frequent code
-    :param D: a database of n graphs
-    :param minsup: minimum support threshold
-    :return:
+    Keyword arguments:
+    C -- a canonical and frequent code (list of tuples)
+    D -- a database of n graphs (list of graphs)
+    minsup -- minimum support threshold (integer)
     """
+
     global num_call
 
     print "pattern {}".format(num_call)

@@ -2,6 +2,7 @@
 
 __author__ = 'Jamie Fujimoto'
 
+
 # referenced code from http://www.bogotobogo.com/python/python_graph_data_structures.php
 
 
@@ -15,7 +16,7 @@ class Vertex(object):
 
     def add_edge(self, neighbor, neighbor_label, edge_label):
         self.neighbors.append(neighbor)
-        edge = (self.label, neighbor_label, edge_label)  # might be an issue because it does not maintain vertex IDs
+        edge = (self.label, neighbor_label, edge_label)
         self.edges[neighbor] = edge
 
 

@@ -2,7 +2,9 @@
 
 import graph
 
+
 __author__ = 'Jamie Fujimoto'
+
 
 # referenced code from https://github.com/clemej/pygspan
 
