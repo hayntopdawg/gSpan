@@ -3,6 +3,7 @@
 import copy
 import graph
 import graph_reader
+import os.path
 
 
 __author__ = 'Jamie Fujimoto'
@@ -174,6 +175,30 @@ def is_canonical(C):
     return True
 
 
+def output(C):
+    global num_call
+
+    if os.path.isfile("output.txt") and num_call > 1:
+        mode = "a"
+    else:
+        mode = "w"
+
+    with open("output.txt", mode) as f:
+        print "pattern {}".format(num_call)
+        f.write("pattern {}\n".format(num_call))
+
+        num_call += 1
+
+        if not C:
+            print "()"
+            f.write("()\n")
+        for t in C:
+            print t
+            f.write("{}\n".format(t))
+        print ""
+        f.write("\n")
+
+
 def gSpan(C, D, minsup):
     """
     Recursively mines a database of graphs to determine all frequent subgraphs.
@@ -184,15 +209,7 @@ def gSpan(C, D, minsup):
     minsup -- minimum support threshold (integer)
     """
 
-    global num_call
-
-    print "pattern {}".format(num_call)
-    num_call += 1
-    if not C:
-        print "()"
-    for t in C:
-        print t
-    print ""
+    output(C)
 
     E = right_most_path_extensions(C, D)
     for (t, sup) in E:
@@ -203,9 +220,13 @@ def gSpan(C, D, minsup):
 
 
 if __name__ == "__main__":
-    # D = graph_reader.graph_reader("exampleG.txt")
-    D = graph_reader.graph_reader("Compound_422.txt")
+    # Test exampleG
+    D = graph_reader.graph_reader("exampleG.txt")
     gSpan([], D, 2)
+
+    # # Test Compound_422
+    # D = graph_reader.graph_reader("Compound_422.txt")
+    # gSpan([], D, 100)
 
     # # Test right_most_path without support count
     # E = right_most_path_extensions(None, D)
